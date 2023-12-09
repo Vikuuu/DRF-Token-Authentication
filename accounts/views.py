@@ -1,15 +1,21 @@
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework import status
-from .serializers import UserAccountSerializer, UserLoginSerializer
+from rest_framework import status, permissions, authentication
+from .serializers import (
+    UserAccountSerializer,
+    UserLoginSerializer,
+    UserPasswordResetSerializer,
+)
 from rest_framework.authtoken.models import Token
 from django.contrib.auth import get_user_model
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, login
 
 User = get_user_model()
 
 
 class RegisterView(APIView):
+    permission_classes = [permissions.AllowAny]
+
     def post(self, request, format=None):
         try:
             data = request.data
@@ -37,6 +43,8 @@ class RegisterView(APIView):
 
 
 class LoginView(APIView):
+    permission_classes = [permissions.AllowAny]
+
     def post(self, request, format=None):
         try:
             data = request.data
@@ -46,22 +54,23 @@ class LoginView(APIView):
                 return Response(
                     {"error": serializer.errors}, status=status.HTTP_400_BAD_REQUEST
                 )
-            
+
             email = serializer.validated_data["email"]
             password = serializer.validated_data["password"]
-            
+
             user = authenticate(request, email=email, password=password)
-            
+
             if user:
                 token = Token.objects.get(user=user)
+                user = login(request, user)
                 return Response(
                     {"user": serializer.data, "token": str(token)},
-                    status=status.HTTP_200_OK
+                    status=status.HTTP_200_OK,
                 )
             else:
                 return Response(
                     {"error": "Invalid email or password"},
-                    status=status.HTTP_401_UNAUTHORIZED
+                    status=status.HTTP_401_UNAUTHORIZED,
                 )
 
         except Exception as e:
@@ -72,10 +81,27 @@ class LoginView(APIView):
 
 
 class ForgetPasswordView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+    authentication_classes = [authentication.TokenAuthentication]
+
     def post(self, request, format=None):
-        pass
+        data = request.data
+        serializer = UserPasswordResetSerializer(data=data)
+
+        if not serializer.is_valid():
+            return Response(
+                {"error": serializer.errors}, status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        user = serializer.change_password(serializer.validated_data)
+        return Response({
+            "user": serializer.data, "password reset": "successfull"},
+            status=status.HTTP_205_RESET_CONTENT
+        )
 
 
 class UserProfileView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
     def patch(self, request, format=None):
         pass

@@ -22,3 +22,22 @@ class UserAccountSerializer(serializers.ModelSerializer):
 class UserLoginSerializer(serializers.Serializer):
     email = serializers.EmailField()
     password = serializers.CharField(write_only=True)
+
+
+class UserPasswordResetSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    password = serializers.CharField(write_only=True)
+    
+    def change_password(self, validated_data):
+        email = self.validated_data["email"]
+        password = self.validated_data["password"]
+        
+        if User.objects.filter(email=email).exists():
+            user = User.objects.get(email=email)
+            user.set_password(password)
+            user.save()
+            return user
+        else:
+            return serializers.ValidationError({
+                "error": "Please enter valid credentials"
+            })
