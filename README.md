@@ -61,4 +61,4 @@ All the API endpoints are tested.
 
 ### API Testing Vedio
 
-To see how the api are tested open the vedio titled: `API Testing.mp4`
+To see how the api are tested open the vedio linked: [API Testing](https://github.com/Vikuuu/DRF-Token-Authentication/blob/main/API%20Tesiting.mp4)
