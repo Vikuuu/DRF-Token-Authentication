@@ -62,7 +62,7 @@ class LoginView(APIView):
 
             if user:
                 token = Token.objects.get(user=user)
-                user = login(request, user)
+                #user = login(request, user)
                 return Response(
                     {"user": serializer.data, "token": str(token)},
                     status=status.HTTP_200_OK,
