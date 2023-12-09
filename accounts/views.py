@@ -12,6 +12,8 @@ from django.contrib.auth import authenticate, login
 
 User = get_user_model()
 
+from users.models import UserProfile
+
 
 class RegisterView(APIView):
     permission_classes = [permissions.AllowAny]
@@ -27,6 +29,10 @@ class RegisterView(APIView):
                 )
 
             user = serializer.create(serializer.validated_data)
+
+            user_profile = UserProfile.objects.create(user=user)
+            user_profile.save()
+
             user = User.objects.get(email=serializer.data["email"])
 
             token, _ = Token.objects.get_or_create(user=user)
@@ -62,7 +68,7 @@ class LoginView(APIView):
 
             if user:
                 token = Token.objects.get(user=user)
-                #user = login(request, user)
+                # user = login(request, user)
                 return Response(
                     {"user": serializer.data, "token": str(token)},
                     status=status.HTTP_200_OK,
@@ -92,11 +98,11 @@ class ForgetPasswordView(APIView):
             return Response(
                 {"error": serializer.errors}, status=status.HTTP_400_BAD_REQUEST
             )
-        
+
         user = serializer.change_password(serializer.validated_data)
-        return Response({
-            "user": serializer.data, "password reset": "successfull"},
-            status=status.HTTP_205_RESET_CONTENT
+        return Response(
+            {"user": serializer.data, "password reset": "successfull"},
+            status=status.HTTP_205_RESET_CONTENT,
         )
 
 
