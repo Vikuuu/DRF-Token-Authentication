@@ -1,6 +1,13 @@
-# DIPEAT FOOD PRIVATE LIMITED ASSIGNMENT
+# DRF Token Authentication
 
 In this assignment, we have created **Django REST Framework** project that enables the User registeration and login using the **Token Authentication** system.
+
+### Cloning the repository
+Clone the repository using the command
+```
+git clone https://github.com/Vikuuu/DRF-Token-Authentication.git
+```
+
 
 ### Getting Started
 
@@ -62,3 +69,45 @@ All the API endpoints are tested.
 ### API Testing Vedio
 
 To see how the api are tested open the vedio linked: [API Testing](https://github.com/Vikuuu/DRF-Token-Authentication/blob/main/API%20Tesiting.mp4)
+
+### API Documentation
+
+1. User Registration
+```
+  "Endpoint": "api/auth/register",
+  "method": "POST",
+  "body": {"email": "", "username": "", "password": ""},
+  "description": "Creates a new User Account"
+```
+
+2. User Login
+```
+  "Endpoint": "api/auth/login",
+  "method": "POST",
+  "body": {"email": "", "password": ""},
+  "description": "Login the user"
+```
+
+3. User Password Reset
+```
+  "Endpoint": "api/auth/resetpassword",
+  "method": "POST",
+  "body": {"email": "", "new-password": ""},
+  "description": "Resets the user password to the new password provided by the user"
+```
+
+4. User Profile
+```
+  "Endpoint": "api/user/profile",
+  "method": "GET",
+  "body": ,
+  "description": "Returns the user profile data"
+```
+
+5. Updating User Profile
+```
+  "Endpoint": "api/user/profile",
+  "method": "POST",
+  "body": {"first_name": "", "last_name": "", "phone_no": ""},
+  "description": "Updates the user profile"
+```
